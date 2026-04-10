@@ -17,7 +17,8 @@ class TorBridgePresets {
   /// `/circumvention/settings` first, falls back to `/circumvention/builtin`.
   ///
   /// Throws if the fetch fails — use [snowflake] as a fallback.
-  static Future<TorBridgeConfig> fetchSnowflake() => TorBridgeFetcher.fetchSnowflake();
+  static Future<TorBridgeConfig> fetchSnowflake() =>
+      TorBridgeFetcher.fetchSnowflake();
 
   /// Default obfs4 bridges shipped from `backend/torrc`.
   static const List<String> defaultObfs4Bridges = [

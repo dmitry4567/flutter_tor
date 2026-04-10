@@ -16,7 +16,8 @@ class TorBridgeFetcher {
   ///
   /// Throws if both endpoints fail or return no obfs4 bridges.
   static Future<TorBridgeConfig> fetchObfs4() async {
-    final lines = await _fetchFromSettings('obfs4') ?? await _fetchBuiltin('obfs4');
+    final lines =
+        await _fetchFromSettings('obfs4') ?? await _fetchBuiltin('obfs4');
     if (lines == null || lines.isEmpty) {
       throw Exception('Failed to fetch obfs4 bridges from torproject.org');
     }
@@ -34,7 +35,8 @@ class TorBridgeFetcher {
   ///
   /// Throws if both endpoints fail or return no snowflake bridges.
   static Future<TorBridgeConfig> fetchSnowflake() async {
-    final lines = await _fetchFromSettings('snowflake') ?? await _fetchBuiltin('snowflake');
+    final lines = await _fetchFromSettings('snowflake') ??
+        await _fetchBuiltin('snowflake');
     if (lines == null || lines.isEmpty) {
       throw Exception('Failed to fetch snowflake bridges from torproject.org');
     }
@@ -55,7 +57,9 @@ class TorBridgeFetcher {
           Uri.parse('$_baseUrl/circumvention/settings'),
         );
         request.headers.contentType = ContentType.json;
-        request.write(jsonEncode({'transports': [transport]}));
+        request.write(jsonEncode({
+          'transports': [transport]
+        }));
 
         final response = await request.close().timeout(_timeout);
         if (response.statusCode != 200) return null;

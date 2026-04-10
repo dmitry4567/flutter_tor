@@ -55,6 +55,7 @@ macos/tor.xcframework.zip
 
 # Swift Package Manager build artifacts
 ios/flutter_tor/.build/
+macos/flutter_tor/.build/
 
 # Lock files (pub.dev includes pubspec.yaml, not locks)
 pubspec.lock
