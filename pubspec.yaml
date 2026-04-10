@@ -1,0 +1,21 @@
+name: flutter_tor
+version: 0.1.0
+description: Native iOS Flutter plugin for Tor using Tor.xcframework (iCepa) with obfs4/snowflake bridge support via IPtProxy
+homepage: https://github.com/dmitry4567/flutter_tor
+repository: https://github.com/dmitry4567/flutter_tor
+issue_tracker: https://github.com/dmitry4567/flutter_tor/issues
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.3.0'
+  
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.8
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: FlutterTorPlugin
