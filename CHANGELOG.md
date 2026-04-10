@@ -1,3 +1,10 @@
+## 0.2.0
+
+* macOS platform support.
+* `TorBridgeFetcher` for fetching fresh obfs4 and snowflake bridges from bridges.torproject.org.
+* `TorBridgePresets.fetchObfs4()` and `TorBridgePresets.fetchSnowflake()` convenience methods.
+* New `Tor` class as the main entry point (`TorIos` is now a deprecated alias).
+
 ## 0.1.0
 
 * Initial release.

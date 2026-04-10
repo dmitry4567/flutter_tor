@@ -43,13 +43,13 @@ class _TorHomePageState extends State<TorHomePage> {
   void initState() {
     super.initState();
 
-    _statusSub = TorIos.statusStream.listen((event) {
+    _statusSub = Tor.statusStream.listen((event) {
       setState(() {
         _status = event;
         _bridgesSynced = true;
       });
     });
-    _logSub = TorIos.logStream.listen((event) {
+    _logSub = Tor.logStream.listen((event) {
       setState(() {
         _logs.insert(0, event);
         if (_logs.length > 200) _logs.removeLast();
@@ -64,7 +64,7 @@ class _TorHomePageState extends State<TorHomePage> {
   /// though Tor is already running.
   Future<void> _syncNativeState() async {
     try {
-      final status = await TorIos.getStatus();
+      final status = await Tor.getStatus();
       if (!mounted) return;
       setState(() {
         _status = status;
@@ -74,7 +74,7 @@ class _TorHomePageState extends State<TorHomePage> {
 
       if (status.status == TorStatus.connected ||
           status.status == TorStatus.connecting) {
-        final port = await TorIos.getProxyPort();
+        final port = await Tor.getProxyPort();
         if (!mounted) return;
         setState(() => _proxyPort = port);
       }
@@ -101,8 +101,8 @@ class _TorHomePageState extends State<TorHomePage> {
           .map((l) => l.trim())
           .where((l) => l.isNotEmpty)
           .toList();
-      await TorIos.initialize(_bridgeMode.toConfig(customLines: customLines));
-      final port = await TorIos.getProxyPort();
+      await Tor.initialize(_bridgeMode.toConfig(customLines: customLines));
+      final port = await Tor.getProxyPort();
       setState(() => _proxyPort = port);
     } catch (e) {
       _showSnack('Start error: $e');
@@ -111,7 +111,7 @@ class _TorHomePageState extends State<TorHomePage> {
 
   Future<void> _stop() async {
     try {
-      await TorIos.stop();
+      await Tor.stop();
     } catch (e) {
       _showSnack('Stop error: $e');
     } finally {
@@ -130,7 +130,7 @@ class _TorHomePageState extends State<TorHomePage> {
 
   Future<void> _refreshStatus() async {
     try {
-      final s = await TorIos.getStatus();
+      final s = await Tor.getStatus();
       setState(() => _status = s);
     } catch (e) {
       _showSnack('Status error: $e');
@@ -217,7 +217,7 @@ class _TorHomePageState extends State<TorHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('tor_ios demo'),
+        title: const Text('tor demo'),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         scrolledUnderElevation: 0,
         actions: [

@@ -1,0 +1,29 @@
+PODS:
+  - flutter_tor (0.1.0):
+    - FlutterMacOS
+    - IPtProxy (~> 5.3)
+  - FlutterMacOS (1.0.0)
+  - IPtProxy (5.4.0)
+
+DEPENDENCIES:
+  - flutter_tor (from `Flutter/ephemeral/.symlinks/plugins/flutter_tor/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+
+SPEC REPOS:
+  trunk:
+    - IPtProxy
+
+EXTERNAL SOURCES:
+  flutter_tor:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_tor/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+
+SPEC CHECKSUMS:
+  flutter_tor: f86de847a9a235c2b435996098787499193ab0d3
+  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+  IPtProxy: 81a85612bfa296a67055bd322408c7618425d754
+
+PODFILE CHECKSUM: ae8653f75116ebc2cb4655db8a805fab5b87a269
+
+COCOAPODS: 1.16.2

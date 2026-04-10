@@ -1,6 +1,6 @@
 # flutter_tor
 
-Native Flutter plugin for embedded Tor client using [Tor.xcframework](https://github.com/iCepa/Tor.framework) (iCepa) with obfs4/snowflake bridge support via [IPtProxy](https://github.com/nicveeper/IPtProxy).
+Native Flutter plugin for embedded Tor client on iOS & macOS using [Tor.xcframework](https://github.com/iCepa/Tor.framework) (iCepa) with obfs4/snowflake bridge support via [IPtProxy](https://github.com/nicveeper/IPtProxy).
 
 ## Features
 
@@ -14,20 +14,31 @@ Native Flutter plugin for embedded Tor client using [Tor.xcframework](https://gi
 
 | iOS | macOS | Android | Web | Windows | Linux |
 |:---:|:-----:|:-------:|:---:|:-------:|:-----:|
-| ✅  |  🔜  |   —    |  —  |    —   |   —   |
+| ✅  |  ✅   |   —    |  —  |    —   |   —   |
 
 ## Getting started
 
 ### Requirements
 
-- iOS 15.0+
+- iOS 15.0+ / macOS 12.0+
 - Flutter 3.3+
 
 ### Installation
 
 ```yaml
 dependencies:
-  flutter_tor: ^0.1.0
+  flutter_tor: ^0.2.0
+```
+
+### macOS entitlements
+
+Tor requires outbound network access. Add these to your macOS Runner entitlements (`DebugProfile.entitlements` and `Release.entitlements`):
+
+```xml
+<key>com.apple.security.network.client</key>
+<true/>
+<key>com.apple.security.network.server</key>
+<true/>
 ```
 
 ## Usage
@@ -38,35 +49,51 @@ dependencies:
 import 'package:flutter_tor/flutter_tor.dart';
 
 // Start Tor
-await TorIos.initialize();
+await Tor.initialize();
 
 // Listen for status changes
-TorIos.statusStream.listen((event) {
+Tor.statusStream.listen((event) {
   print('${event.status} ${event.progress}%');
 });
 
 // Get SOCKS5 proxy port once connected
-final port = await TorIos.getProxyPort();
+final port = await Tor.getProxyPort();
 
 // Stop Tor
-await TorIos.stop();
+await Tor.stop();
 ```
 
 ### Using bridges
 
 ```dart
 // Use built-in obfs4 bridges
-await TorIos.initialize(TorBridgePresets.obfs4Default);
+await Tor.initialize(TorBridgePresets.obfs4Default);
 
 // Use snowflake
-await TorIos.initialize(TorBridgePresets.snowflake);
+await Tor.initialize(TorBridgePresets.snowflake);
 
 // Use custom bridge lines
-await TorIos.initialize(TorBridgeConfig(
+await Tor.initialize(TorBridgeConfig(
   useBridges: true,
   bridgeLines: ['obfs4 198.51.100.1:443 ...'],
 ));
 ```
+
+### Fetching fresh bridges
+
+Built-in bridge lines can become stale. `TorBridgePresets` can fetch up-to-date bridges from the Tor Project's [circumvention API](https://bridges.torproject.org/moat):
+
+```dart
+// Fetch fresh obfs4 bridges (country-aware, falls back to built-in list)
+final config = await TorBridgePresets.fetchObfs4();
+await Tor.initialize(config);
+
+// Fetch fresh snowflake bridges
+final sf = await TorBridgePresets.fetchSnowflake();
+await Tor.initialize(sf);
+```
+
+Both methods throw on network failure — use the static presets (`obfs4Default`, `snowflake`) as a fallback.
 
 ### Making requests through Tor
 
@@ -76,7 +103,7 @@ Use the SOCKS5 proxy port with any HTTP client that supports SOCKS proxies (e.g.
 import 'dart:io';
 import 'package:socks5_proxy/socks_client.dart';
 
-final port = await TorIos.getProxyPort();
+final port = await Tor.getProxyPort();
 final client = HttpClient();
 SocksTCPClient.assignToHttpClient(client, [
   ProxySettings(InternetAddress.loopbackIPv4, port),
@@ -92,12 +119,12 @@ Native logs (NSLog and Tor stdout/stderr) can be disabled via a single flag. Set
 
 ```dart
 // Disable all native logs
-TorIos.logsEnabled = false;
+Tor.logsEnabled = false;
 
-await TorIos.initialize();
+await Tor.initialize();
 
 // Re-enable at any time
-TorIos.logsEnabled = true;
+Tor.logsEnabled = true;
 ```
 
 ### Recovering state after hot restart
@@ -105,9 +132,9 @@ TorIos.logsEnabled = true;
 Tor runs in a native singleton that outlives Dart restarts. Sync on startup:
 
 ```dart
-final status = await TorIos.getStatus();
+final status = await Tor.getStatus();
 if (status.status == TorStatus.connected) {
-  final port = await TorIos.getProxyPort();
+  final port = await Tor.getProxyPort();
   // ready to use
 }
 ```
@@ -116,7 +143,7 @@ if (status.status == TorStatus.connected) {
 
 | Class | Description |
 |---|---|
-| `TorIos` | Main entry point — `initialize()`, `stop()`, `getProxyPort()`, `getStatus()`, `statusStream`, `logStream`, `logsEnabled` |
+| `Tor` | Main entry point — `initialize()`, `stop()`, `getProxyPort()`, `getStatus()`, `statusStream`, `logStream`, `logsEnabled`. `TorIos` is a deprecated alias |
 | `TorBridgeConfig` | Bridge configuration with `useBridges`, `bridgeLines`, `useObfs4`, `useSnowflake` |
 | `TorBridgePresets` | Ready-to-use presets: `obfs4Default`, `snowflake`, `noBridges` |
 | `TorStatus` | Enum: `disconnected`, `connecting`, `connected`, `error` |

@@ -1,7 +1,24 @@
 import '../models/tor_bridge_config.dart';
+import 'tor_bridge_fetcher.dart';
 
 /// Predefined bridge configurations bundled with the package.
 class TorBridgePresets {
+  /// Fetches fresh obfs4 bridges from bridges.torproject.org.
+  ///
+  /// Uses the Tor Project's circumvention API: tries country-aware
+  /// `/circumvention/settings` first, falls back to `/circumvention/builtin`.
+  ///
+  /// Throws if the fetch fails — use [obfs4Default] as a fallback.
+  static Future<TorBridgeConfig> fetchObfs4() => TorBridgeFetcher.fetchObfs4();
+
+  /// Fetches fresh snowflake bridges from bridges.torproject.org.
+  ///
+  /// Uses the Tor Project's circumvention API: tries country-aware
+  /// `/circumvention/settings` first, falls back to `/circumvention/builtin`.
+  ///
+  /// Throws if the fetch fails — use [snowflake] as a fallback.
+  static Future<TorBridgeConfig> fetchSnowflake() => TorBridgeFetcher.fetchSnowflake();
+
   /// Default obfs4 bridges shipped from `backend/torrc`.
   static const List<String> defaultObfs4Bridges = [
     '158.69.55.8:444 27FC184FF5612418A38DA1B038485AD7B63EB322 cert=djModYy0VYC7nTnQPFM5Bo7c1vesLnO1WhXnjUe24cyxYZSrvI872hy6P/zf8nn7UK2QaA iat-mode=0',
